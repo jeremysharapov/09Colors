@@ -23,9 +23,9 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zbuf ) {
   int xt, xm, xb, yt, ym, yb, y;
   double x0, x1, zt, zm, zb, z0, z1, delta0, delta1, deltaz0, deltaz1;
   color c;
-  c.red = rand() % 256;
-  c.green = rand() % 256;
-  c.blue = rand() % 256;
+  c.red = rand() % 255;
+  c.green = rand() % 255;
+  c.blue = rand() % 255;
   if (points -> m[1][i] > points -> m[1][i + 1]){
     if (points -> m[1][i] > points -> m[1][i + 2]){
       xt = points -> m[0][i];
@@ -138,7 +138,11 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zbuf ) {
     delta1 = (xm - xb) / (ym - yb);
     deltaz1 = (zm - zb) / (ym - yb);
   }
-  for (y = yb; y < ym; y++){
+  else{
+    delta1 = 0;
+    deltaz1 = 0;
+  }
+  /*for (y = yb; y < ym; y++){
     draw_line(x0, y, z0, x1, y, z1, s, zbuf, c);
     x0 += delta0;
     x1 += delta1;
@@ -149,9 +153,32 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zbuf ) {
     delta1 = (xt - xm) / (yt - ym);
     deltaz1 = (zt - zm) / (yt - ym);
   }
+  else{
+    delta1 = 0;
+    deltaz1 = 0;
+  }
   x1 = xm;
   z1 = zm;
   for (y = ym; y < yt; y++){
+    draw_line(x0, y, z0, x1, y, z1, s, zbuf, c);
+    x0 += delta0;
+    x1 += delta1;
+    z0 += deltaz0;
+    z1 += deltaz1;
+    }*/
+  for (y = yb; y < yt; y++){
+    if (y == ym){
+       if (yt != ym){
+	 delta1 = (xt - xm) / (yt - ym);
+	 deltaz1 = (zt - zm) / (yt - ym);
+       }
+       else{
+	 delta1 = 0;
+	 deltaz1 = 0;
+       }
+       x1 = xm;
+       z1 = zm;
+    }
     draw_line(x0, y, z0, x1, y, z1, s, zbuf, c);
     x0 += delta0;
     x1 += delta1;
@@ -718,7 +745,12 @@ void draw_line(int x0, int y0, double z0,
       loop_end = y;
     }
   }
-  dz = (z1 - z0) / (loop_end - loop_start);
+  if (loop_end != loop_start){
+    dz = (z1 - z0) / (loop_end - loop_start);
+  }
+  else{
+    dz = 0;
+  }
   while ( loop_start < loop_end ) {
     
     plot( s, zb, c, x, y, z);
