@@ -94,46 +94,19 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zbuf ) {
       zb = points -> m[2][i];
     }
   }
-  /*int top = i;
-  int mid = i + 1;
-  int bot = i + 2;
-  int temp;
-
-  if (points -> m[1][top] < points -> m[1][bot]){
-    temp = top;
-    top = bot;
-    bot = temp;
-  }
-
-  if (points -> m[1][top] < points -> m[1][mid]){
-    temp = top;
-    top = mid;
-    mid = temp;
-  }
-
-  if (points -> m[1][mid] < points -> m[1][top]){
-    temp = bot;
-    bot = mid;
-    mid = temp;
-  }
-
-  xt = points -> m[0][top];
-  yt = points -> m[1][top];
-  zt = points -> m[2][top];
-  xm = points -> m[0][mid];
-  ym = points -> m[1][mid];
-  zm = points -> m[2][mid];
-  xb = points -> m[0][bot];
-  yb = points -> m[1][bot];
-  zb = points -> m[2][bot];*/
-  
   
   x0 = xb;
   x1 = xb;
   z0 = zb;
   z1 = zb;
-  delta0 = (xt - xb) / (yt - yb);
-  deltaz0 = (zt - zb) / (yt - yb);
+  if (yt != yb){
+    delta0 = (xt - xb) / (yt - yb);
+    deltaz0 = (zt - zb) / (yt - yb);
+  }
+  else{
+    delta0 = 0;
+    deltaz0 = 0;
+  }
   if (ym != yb){
     delta1 = (xm - xb) / (ym - yb);
     deltaz1 = (zm - zb) / (ym - yb);
@@ -142,42 +115,19 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zbuf ) {
     delta1 = 0;
     deltaz1 = 0;
   }
-  /*for (y = yb; y < ym; y++){
-    draw_line(x0, y, z0, x1, y, z1, s, zbuf, c);
-    x0 += delta0;
-    x1 += delta1;
-    z0 += deltaz0;
-    z1 += deltaz1;
-  }
-  if (yt != ym){
-    delta1 = (xt - xm) / (yt - ym);
-    deltaz1 = (zt - zm) / (yt - ym);
-  }
-  else{
-    delta1 = 0;
-    deltaz1 = 0;
-  }
-  x1 = xm;
-  z1 = zm;
-  for (y = ym; y < yt; y++){
-    draw_line(x0, y, z0, x1, y, z1, s, zbuf, c);
-    x0 += delta0;
-    x1 += delta1;
-    z0 += deltaz0;
-    z1 += deltaz1;
-    }*/
+  
   for (y = yb; y < yt; y++){
     if (y == ym){
-       if (yt != ym){
-	 delta1 = (xt - xm) / (yt - ym);
-	 deltaz1 = (zt - zm) / (yt - ym);
-       }
-       else{
-	 delta1 = 0;
-	 deltaz1 = 0;
-       }
-       x1 = xm;
-       z1 = zm;
+      if (yt != ym){
+	delta1 = (xt - xm) / (yt - ym);
+	deltaz1 = (zt - zm) / (yt - ym);
+      }
+      else{
+	delta1 = 0;
+	deltaz1 = 0;
+      }
+      x1 = xm;
+      z1 = zm;
     }
     draw_line(x0, y, z0, x1, y, z1, s, zbuf, c);
     x0 += delta0;
@@ -185,6 +135,7 @@ void scanline_convert( struct matrix *points, int i, screen s, zbuffer zbuf ) {
     z0 += deltaz0;
     z1 += deltaz1;
   }
+  
 }
 
 /*======== void add_polygon() ==========
