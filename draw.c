@@ -20,8 +20,8 @@
   Color should be set differently for each polygon.
   ====================*/
 void scanline_convert( struct matrix *points, int i, screen s, zbuffer zbuf ) {
-  int xt, xm, xb, yt, ym, yb, y;
-  double x0, x1, zt, zm, zb, z0, z1, delta0, delta1, deltaz0, deltaz1;
+  int yt, ym, yb, y;
+  double xt, xm, xb, x0, x1, zt, zm, zb, z0, z1, delta0, delta1, deltaz0, deltaz1;
   color c;
   c.red = rand() % 255;
   c.green = rand() % 255;
